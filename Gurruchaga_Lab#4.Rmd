@@ -1,0 +1,94 @@
+---
+title: "Gurruchaga_Lab#4"
+author: "Sofia Gurruchaga"
+date: "2024-10-17"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r}
+library(ggplot2)
+library(readxl)
+library(tidyverse)
+KDerby <- read_excel("Downloads/KDerby.xlsx")
+View(KDerby)
+```
+
+1. 
+```{r}
+ggplot(KDerby, aes(x = Year, y = Time)) + geom_point() +
+ labs(title = "Time vs Year", x = "Year", y = "Time (seconds)")
+```
+2. 
+```{r}
+ggplot(KDerby, aes(x = Year, y = Speed)) + geom_point() +
+ labs(title = "Speed vs Year", x = "Year", y = "Speed (in miles per hour)")
+```
+3. 
+```{r}
+KDerby$Year2 <- KDerby$Year^2
+quad_model <- lm(Speed ~ Year + Year2, data = KDerby)
+plot(quad_model)
+```
+
+4.
+```{r}
+summary(quad_model)
+```
+
+5.
+```{r}
+coefficients(quad_model)
+```
+
+6.
+```{r}
+ggplot(KDerby, aes(x = Year, y = Year2)) +
+  geom_point() +
+  labs(title = "Year² vs Year",
+       x = "Year",
+       y = "Year²")
+```
+
+7.
+```{r}
+ggplot(KDerby, aes(x = StdYear, y = I(StdYear^2))) + geom_point() +
+ labs(title = "StdYear vs StdYear^2", x = "StdYear", y = "StdYear^2")
+```
+8.
+```{r}
+std_model <- lm(Speed ~ StdYear + I(StdYear^2), data = KDerby)
+plot(std_model)
+```
+```{r}
+summary(std_model)
+```
+
+9. 
+```{r}
+mean_year <- mean(KDerby$Year)
+sd_year <- sd(KDerby$Year)
+StdYear_2019 <- (2019 - mean_year) / sd_year
+
+new_data <- data.frame(StdYear = StdYear_2019)
+predicted_2019 <- predict(std_model, newdata = new_data)
+predict(std_model, newdata = new_data)
+```
+
+10.
+```{r}
+KDerby$Year3 <- KDerby$Year^3
+cubic_model <- lm(Speed ~ Year + Year2 + Year3, data = KDerby)
+summary(cubic_model)
+```
+```{r}
+anova(quad_model, cubic_model)
+```
+
